@@ -45285,6 +45285,30 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     mounted: function mounted() {
@@ -45307,7 +45331,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             },
 
             edit: false,
-            isDisabled: true
+            isDisabled: true,
+            totalNumberOfTask: ''
 
         };
     },
@@ -45324,7 +45349,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 return res.json();
             }).then(function (res) {
                 _this.tasks = res.data;
-                // console.log(res.data);
+                _this.totalNumberOfTask = res.data.length;
+                // alert(res.data.length);
             }).catch(function (err) {
                 console.log(err);
             });
@@ -45546,12 +45572,51 @@ var render = function() {
             ])
           ])
         ])
-      })
+      }),
+      _vm._v(" "),
+      _c("hr"),
+      _vm._v(" "),
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-md-4" }, [
+          _c("h6", [
+            _vm._v(
+              "\n                " +
+                _vm._s(_vm.totalNumberOfTask) +
+                " Item left\n            "
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _vm._m(0)
+      ])
     ],
     2
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-8" }, [
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-md-2" }, [
+          _c("button", { staticClass: "btn btn-primary" }, [_vm._v("All")])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-md-2" }, [
+          _c("button", { staticClass: "btn btn-primary" }, [_vm._v("Active")])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-md-2" }, [
+          _c("button", { staticClass: "btn btn-primary" }, [
+            _vm._v("Completed")
+          ])
+        ])
+      ])
+    ])
+  }
+]
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {

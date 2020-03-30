@@ -80,6 +80,30 @@
                         <span class="sr-only">Close</span>
                     </button>
                 </div>
+            </div>            
+        </div>
+
+        <!-- footer -->
+        <hr>
+        <div class="row">
+            <div class="col-md-4">
+                <h6>
+                    {{ totalNumberOfTask }} Item left
+                </h6>
+            </div>
+
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-2">
+                        <button class="btn btn-primary">All</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary">Active</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary">Completed</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -112,10 +136,9 @@
                     editing:0,
                 },
 
-
-
                 edit: false,
                 isDisabled: true,
+                totalNumberOfTask:'',
 
             }
         },
@@ -135,7 +158,8 @@
                         .then(
                             res => {
                                 this.tasks = res.data;
-                                // console.log(res.data);
+                                this.totalNumberOfTask = res.data.length;
+                                // alert(res.data.length);
                                 
                             }
                         )
