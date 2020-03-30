@@ -20,6 +20,20 @@
         padding: 0.75rem;
     }
 
+    .row {
+        position: relative;
+    }
+
+    .hover-btn {
+        position: absolute;
+        right: 15px;
+        display: none;
+    }
+
+    .row:hover .hover-btn {
+        display: block;
+    }
+
 </style>
 
 <template>
@@ -33,7 +47,7 @@
             id="taskInputBox"
             placeholder="What needs to be done?"  
             
-            v-model="task.name" 
+            v-model="newTask.name" 
             
             v-on:keyup.enter="createTask"
 
@@ -49,18 +63,28 @@
             v-for="task in tasks"
             v-bind:key="task.id"
         >
+            <div class="row">
+                <div class="col-md-10">
+                    <h4 @dblclick="task.editing = 1" v-if="task.editing === 0">{{ task.name }}</h4>
+                    <input 
+                        v-if="task.editing === 1"
+                        v-model="task.name"
+                        @blur="editTask(task)"
+                        @keyup.enter="editTask(task)"
+                    >
+                </div>
 
-        
-			<h4 @dblclick="task.editing = 1" v-if="task.editing === 0">{{ task.name }}</h4>
-			<input 
-				v-if="task.editing === 1"
-				v-model="task.name"
-				@blur="editTask(task)"
-				@keyup.enter="editTask(task)"
-			>
-
-
+                <div class="hover-btn">
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="alert" @click="deleteTask(task)">
+                        <span aria-hidden="true">×</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                </div>
+            </div>
         </div>
+
+
+
 
 
     </div>
@@ -81,6 +105,14 @@
                     name:'',
                     editing:0,
                 },
+
+                newTask: {
+                    id:'',
+                    name:'',
+                    editing:0,
+                },
+
+
 
                 edit: false,
                 isDisabled: true,
@@ -123,7 +155,7 @@
                     fetch('api/task',{
                         method: 'post',
                         
-                        body: JSON.stringify(this.task),
+                        body: JSON.stringify(this.newTask),
                         
                         headers:{
                             'content-type': 'application/json'
@@ -132,8 +164,8 @@
                     .then( res=> res.json())
                     .then( res=> {
 
-                        this.task.id = '';
-                        this.task.name = '';
+                        this.newTask.id = '';
+                        this.newTask.name = '';
 
                         this.getAllTasks();
                     })
@@ -177,7 +209,18 @@
                 .catch( err => console.log(err) ); 
 
 
-            }
+            },
+
+            deleteTask(task) {
+                fetch(  `api/task/${task.id}`,{
+                    method: 'delete'
+                })
+                .then( res => res.json())
+                .then( res => {
+                    this.getAllTasks();
+                })
+                .catch( err => console.log(err) );                
+            },
         },
 
     }
