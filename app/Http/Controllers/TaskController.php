@@ -6,6 +6,7 @@ use App\Task;
 use Illuminate\Http\Request;
 use App\Http\Resources\TaskResource;
 use Response;
+use Carbon\Carbon;
 
 class TaskController extends Controller
 {
@@ -68,7 +69,14 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        //
+        Task::where('id', $request->id)->update([
+            'name' => $request->name,
+            'updated_at' => Carbon::now(),
+            'editing' => false,
+        ]);
+
+        return \json_encode(true);
+
     }
 
     /**
