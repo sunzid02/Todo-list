@@ -34,6 +34,27 @@
         display: block;
     }
 
+
+  .completed {
+    text-decoration: line-through;
+    color: grey;
+  }
+
+
+
+
+
+.visible {
+  visibility: visible;
+}
+.invisible {
+  visibility: hidden;
+}
+
+  /* checkbox starts*/
+
+  /* checkbox ends*/
+
 </style>
 
 <template>
@@ -58,30 +79,57 @@
 
 
 
-        <!-- show tasks -->
-        <div class="card card-body"
-            v-for="task in tasks"
-            v-bind:key="task.id"
-        >
-            <div class="row">
-                <div class="col-md-10">
-                    <h4 @dblclick="task.editing = 1" v-if="task.editing === 0">{{ task.name }}</h4>
-                    <input 
-                        v-if="task.editing === 1"
-                        v-model="task.name"
-                        @blur="editTask(task)"
-                        @keyup.enter="editTask(task)"
-                    >
+        <!-- show all tasks -->
+        <div id="allDiv">
+            <div class="card card-body"
+                v-for="task in tasks"
+                v-bind:key="task.id"
+            >
+                <div class="row">
+                    <div class="col-md-1">             
+                        <input type="checkbox" v-model="task.completed" @click="completeTask(task, totalNumberOfTask)" >
+
+                    </div>
+                    <div class="col-md-10">
+                        <h4 @dblclick="task.editing = 1" v-if="task.editing === 0" :class="{ completed : task.completed }">{{ task.name }}</h4>
+                        <input 
+                            v-if="task.editing === 1"
+                            v-model="task.name"
+                            @blur="editTask(task)"
+                            @keyup.enter="editTask(task)"
+                        >
+                    </div>
+
+                    <div class="hover-btn">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="alert" @click="deleteTask(task)">
+                            <span aria-hidden="true">×</span>
+                            <span class="sr-only">Close</span>
+                        </button>
+                    </div>
+                </div>    
+
+            
+            </div>
+
+        </div>
+
+        <!-- show completed tasks -->
+        <div  id="completedDiv">
+            <div class="card card-body"
+                v-for="ct in completedTasks"
+                v-bind:key="ct.id"
+            >
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 style="text-decoration: line-through; color: grey">{{ ct.name }}</h4>
+
+                    </div>
                 </div>
 
-                <div class="hover-btn">
-                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="alert" @click="deleteTask(task)">
-                        <span aria-hidden="true">×</span>
-                        <span class="sr-only">Close</span>
-                    </button>
-                </div>
-            </div>            
+            </div>
         </div>
+
+
 
         <!-- footer -->
         <hr>
@@ -95,13 +143,13 @@
             <div class="col-md-8">
                 <div class="row">
                     <div class="col-md-2">
-                        <button class="btn btn-primary">All</button>
+                        <button class="btn btn-primary" @click=" allTabVisibility('allDiv') ">All</button>
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-primary">Active</button>
+                        <button class="btn btn-primary" > Active</button>
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-primary">Completed</button>
+                        <button class="btn btn-primary"  @click=" completedTabVisibility('completedDiv') "> Completed</button>
                     </div>
                 </div>
             </div>
@@ -123,22 +171,29 @@
         data() {
             return {
                 tasks: [],
+                completedTasks: [],
 
                 task: {
                     id:'',
                     name:'',
                     editing:0,
+                    completed: 0,
                 },
 
                 newTask: {
                     id:'',
                     name:'',
                     editing:0,
+                    completed: 0,
+
                 },
+
+
 
                 edit: false,
                 isDisabled: true,
-                totalNumberOfTask:'',
+                totalNumberOfTask: 0,
+
 
             }
         },
@@ -225,8 +280,11 @@
 
                     this.task.id = '';
                     this.task.name = '';
+                    this.newTask.id = '';
+                    this.newTask.name = '';
                     this.task.editing = 0;
-                    console.log('Task updated'+ 1);
+                    this.newTask.editing = 0;
+                    // console.log('Task updated'+ 1);
 
                     this.getAllTasks();
                 })
@@ -244,6 +302,55 @@
                     this.getAllTasks();
                 })
                 .catch( err => console.log(err) );                
+            },
+
+            completeTask(task, totalNumberOfTask){
+                document.getElementById("completedDiv").style.display="none";
+
+                this.task.completed = 1;
+                
+                if (task.completed == true) {
+                    this.totalNumberOfTask = totalNumberOfTask - 1;
+                    
+                } 
+                else 
+                {
+                    this.totalNumberOfTask = totalNumberOfTask + 1;
+
+                }
+
+                var completedTaskObj = {
+                    id : task.id,
+                    name : task.name,
+                    editing : 0,
+                    completed : 0
+
+                };
+
+                this.completedTasks.push(completedTaskObj);
+
+
+
+                // console.log(this.completedTasks);
+            },
+
+
+            allTabVisibility(div){
+
+                document.getElementById("allDiv").style.display="none";
+                document.getElementById("completedDiv").style.display="none";
+                document.getElementById(div).style.display="block";                
+                console.log("all btn clicked");
+            },
+
+            completedTabVisibility(div){
+
+                document.getElementById("allDiv").style.display="none";
+                document.getElementById("completedDiv").style.display="none";
+                document.getElementById(div).style.display="block";  
+
+                console.log("completed btn clicked");
+
             },
         },
 

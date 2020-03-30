@@ -44839,7 +44839,7 @@ exports = module.exports = __webpack_require__(46)(false);
 
 
 // module
-exports.push([module.i, "\n.gap[data-v-5df6e888]{\n    padding-top: 200px\n}\n#taskInputBox[data-v-5df6e888]{\n    /* text-align: center; */\n    -ms-flex: 1 1 auto;\n    -webkit-box-flex: 1;\n            flex: 1 1 auto;\n    min-height: 1px;\n    padding: 0.75rem;\n}\n.card-body[data-v-5df6e888] {\n    -ms-flex: 1 1 auto;\n    -webkit-box-flex: 1;\n            flex: 1 1 auto;\n    min-height: 1px;\n    padding: 0.75rem;\n}\n.row[data-v-5df6e888] {\n    position: relative;\n}\n.hover-btn[data-v-5df6e888] {\n    position: absolute;\n    right: 15px;\n    display: none;\n}\n.row:hover .hover-btn[data-v-5df6e888] {\n    display: block;\n}\n\n", ""]);
+exports.push([module.i, "\n.gap[data-v-5df6e888]{\n        padding-top: 200px\n}\n#taskInputBox[data-v-5df6e888]{\n        /* text-align: center; */\n        -ms-flex: 1 1 auto;\n        -webkit-box-flex: 1;\n                flex: 1 1 auto;\n        min-height: 1px;\n        padding: 0.75rem;\n}\n.card-body[data-v-5df6e888] {\n        -ms-flex: 1 1 auto;\n        -webkit-box-flex: 1;\n                flex: 1 1 auto;\n        min-height: 1px;\n        padding: 0.75rem;\n}\n.row[data-v-5df6e888] {\n        position: relative;\n}\n.hover-btn[data-v-5df6e888] {\n        position: absolute;\n        right: 15px;\n        display: none;\n}\n.row:hover .hover-btn[data-v-5df6e888] {\n        display: block;\n}\n.completed[data-v-5df6e888] {\n    text-decoration: line-through;\n    color: grey;\n}\n.visible[data-v-5df6e888] {\n  visibility: visible;\n}\n.invisible[data-v-5df6e888] {\n  visibility: hidden;\n}\n\n  /* checkbox starts*/\n\n  /* checkbox ends*/\n\n", ""]);
 
 // exports
 
@@ -45309,6 +45309,54 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     mounted: function mounted() {
@@ -45317,22 +45365,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             tasks: [],
+            completedTasks: [],
 
             task: {
                 id: '',
                 name: '',
-                editing: 0
+                editing: 0,
+                completed: 0
             },
 
             newTask: {
                 id: '',
                 name: '',
-                editing: 0
+                editing: 0,
+                completed: 0
+
             },
 
             edit: false,
             isDisabled: true,
-            totalNumberOfTask: ''
+            totalNumberOfTask: 0
 
         };
     },
@@ -45408,8 +45460,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
                 _this3.task.id = '';
                 _this3.task.name = '';
+                _this3.newTask.id = '';
+                _this3.newTask.name = '';
                 _this3.task.editing = 0;
-                console.log('Task updated' + 1);
+                _this3.newTask.editing = 0;
+                // console.log('Task updated'+ 1);
 
                 _this3.getAllTasks();
             }).catch(function (err) {
@@ -45428,6 +45483,44 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }).catch(function (err) {
                 return console.log(err);
             });
+        },
+        completeTask: function completeTask(task, totalNumberOfTask) {
+            document.getElementById("completedDiv").style.display = "none";
+
+            this.task.completed = 1;
+
+            if (task.completed == true) {
+                this.totalNumberOfTask = totalNumberOfTask - 1;
+            } else {
+                this.totalNumberOfTask = totalNumberOfTask + 1;
+            }
+
+            var completedTaskObj = {
+                id: task.id,
+                name: task.name,
+                editing: 0,
+                completed: 0
+
+            };
+
+            this.completedTasks.push(completedTaskObj);
+
+            // console.log(this.completedTasks);
+        },
+        allTabVisibility: function allTabVisibility(div) {
+
+            document.getElementById("allDiv").style.display = "none";
+            document.getElementById("completedDiv").style.display = "none";
+            document.getElementById(div).style.display = "block";
+            console.log("all btn clicked");
+        },
+        completedTabVisibility: function completedTabVisibility(div) {
+
+            document.getElementById("allDiv").style.display = "none";
+            document.getElementById("completedDiv").style.display = "none";
+            document.getElementById(div).style.display = "block";
+
+            console.log("completed btn clicked");
         }
     }
 
@@ -45441,63 +45534,110 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "container" },
-    [
-      _c("div", { staticClass: "gap" }),
-      _vm._v(" "),
-      _c(
-        "p",
-        { attrs: { id: "title" } },
-        [_c("font", { attrs: { size: "50" } }, [_vm._v("todos")])],
-        1
-      ),
-      _vm._v(" "),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.newTask.name,
-            expression: "newTask.name"
-          }
-        ],
-        staticClass: "form-control",
-        attrs: {
-          type: "text",
-          id: "taskInputBox",
-          placeholder: "What needs to be done?",
-          autofocus: ""
-        },
-        domProps: { value: _vm.newTask.name },
-        on: {
-          keyup: function($event) {
-            if (
-              !$event.type.indexOf("key") &&
-              _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
-            ) {
-              return null
-            }
-            return _vm.createTask($event)
-          },
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.$set(_vm.newTask, "name", $event.target.value)
-          }
+  return _c("div", { staticClass: "container" }, [
+    _c("div", { staticClass: "gap" }),
+    _vm._v(" "),
+    _c(
+      "p",
+      { attrs: { id: "title" } },
+      [_c("font", { attrs: { size: "50" } }, [_vm._v("todos")])],
+      1
+    ),
+    _vm._v(" "),
+    _c("input", {
+      directives: [
+        {
+          name: "model",
+          rawName: "v-model",
+          value: _vm.newTask.name,
+          expression: "newTask.name"
         }
-      }),
-      _vm._v(" "),
+      ],
+      staticClass: "form-control",
+      attrs: {
+        type: "text",
+        id: "taskInputBox",
+        placeholder: "What needs to be done?",
+        autofocus: ""
+      },
+      domProps: { value: _vm.newTask.name },
+      on: {
+        keyup: function($event) {
+          if (
+            !$event.type.indexOf("key") &&
+            _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+          ) {
+            return null
+          }
+          return _vm.createTask($event)
+        },
+        input: function($event) {
+          if ($event.target.composing) {
+            return
+          }
+          _vm.$set(_vm.newTask, "name", $event.target.value)
+        }
+      }
+    }),
+    _vm._v(" "),
+    _c(
+      "div",
+      { attrs: { id: "allDiv" } },
       _vm._l(_vm.tasks, function(task) {
         return _c("div", { key: task.id, staticClass: "card card-body" }, [
           _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col-md-1" }, [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: task.completed,
+                    expression: "task.completed"
+                  }
+                ],
+                attrs: { type: "checkbox" },
+                domProps: {
+                  checked: Array.isArray(task.completed)
+                    ? _vm._i(task.completed, null) > -1
+                    : task.completed
+                },
+                on: {
+                  click: function($event) {
+                    return _vm.completeTask(task, _vm.totalNumberOfTask)
+                  },
+                  change: function($event) {
+                    var $$a = task.completed,
+                      $$el = $event.target,
+                      $$c = $$el.checked ? true : false
+                    if (Array.isArray($$a)) {
+                      var $$v = null,
+                        $$i = _vm._i($$a, $$v)
+                      if ($$el.checked) {
+                        $$i < 0 &&
+                          _vm.$set(task, "completed", $$a.concat([$$v]))
+                      } else {
+                        $$i > -1 &&
+                          _vm.$set(
+                            task,
+                            "completed",
+                            $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                          )
+                      }
+                    } else {
+                      _vm.$set(task, "completed", $$c)
+                    }
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
             _c("div", { staticClass: "col-md-10" }, [
               task.editing === 0
                 ? _c(
                     "h4",
                     {
+                      class: { completed: task.completed },
                       on: {
                         dblclick: function($event) {
                           task.editing = 1
@@ -45573,47 +45713,91 @@ var render = function() {
           ])
         ])
       }),
+      0
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      { attrs: { id: "completedDiv" } },
+      _vm._l(_vm.completedTasks, function(ct) {
+        return _c("div", { key: ct.id, staticClass: "card card-body" }, [
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col-md-12" }, [
+              _c(
+                "h4",
+                {
+                  staticStyle: {
+                    "text-decoration": "line-through",
+                    color: "grey"
+                  }
+                },
+                [_vm._v(_vm._s(ct.name))]
+              )
+            ])
+          ])
+        ])
+      }),
+      0
+    ),
+    _vm._v(" "),
+    _c("hr"),
+    _vm._v(" "),
+    _c("div", { staticClass: "row" }, [
+      _c("div", { staticClass: "col-md-4" }, [
+        _c("h6", [
+          _vm._v(
+            "\n                " +
+              _vm._s(_vm.totalNumberOfTask) +
+              " Item left\n            "
+          )
+        ])
+      ]),
       _vm._v(" "),
-      _c("hr"),
-      _vm._v(" "),
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-md-4" }, [
-          _c("h6", [
-            _vm._v(
-              "\n                " +
-                _vm._s(_vm.totalNumberOfTask) +
-                " Item left\n            "
+      _c("div", { staticClass: "col-md-8" }, [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-md-2" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary",
+                on: {
+                  click: function($event) {
+                    return _vm.allTabVisibility("allDiv")
+                  }
+                }
+              },
+              [_vm._v("All")]
+            )
+          ]),
+          _vm._v(" "),
+          _vm._m(0),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-md-2" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary",
+                on: {
+                  click: function($event) {
+                    return _vm.completedTabVisibility("completedDiv")
+                  }
+                }
+              },
+              [_vm._v(" Completed")]
             )
           ])
-        ]),
-        _vm._v(" "),
-        _vm._m(0)
+        ])
       ])
-    ],
-    2
-  )
+    ])
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-8" }, [
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-md-2" }, [
-          _c("button", { staticClass: "btn btn-primary" }, [_vm._v("All")])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-md-2" }, [
-          _c("button", { staticClass: "btn btn-primary" }, [_vm._v("Active")])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-md-2" }, [
-          _c("button", { staticClass: "btn btn-primary" }, [
-            _vm._v("Completed")
-          ])
-        ])
-      ])
+    return _c("div", { staticClass: "col-md-2" }, [
+      _c("button", { staticClass: "btn btn-primary" }, [_vm._v(" Active")])
     ])
   }
 ]
