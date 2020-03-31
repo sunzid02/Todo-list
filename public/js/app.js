@@ -45405,6 +45405,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     mounted: function mounted() {
@@ -45447,6 +45449,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     created: function created() {
         this.getAllTasks();
+        // document.getElementById("footer").style.display="none";
+
         // this.formVisibility();
     },
 
@@ -45822,9 +45826,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             console.log("active btn clicked");
         },
         formVisibility: function formVisibility() {
-            document.getElementById("allDiv").style.display = "block";
-            document.getElementById("activeDiv").style.display = "none";
-            document.getElementById("completedDiv").style.display = "none";
+            // document.getElementById("allDiv").style.display="block";
+            // document.getElementById("activeDiv").style.display="none";
+            // document.getElementById("completedDiv").style.display="none";
+            document.getElementById("footer").style.display = "none";
         }
     }
 
@@ -46195,85 +46200,87 @@ var render = function() {
       0
     ),
     _vm._v(" "),
-    _c("hr"),
-    _vm._v(" "),
-    _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "col-md-4" }, [
-        _c("h6", [
-          _vm._v(
-            "\n                " +
-              _vm._s(_vm.totalNumberOfTask) +
-              " Item left\n            "
-          )
+    _c("div", { attrs: { id: "footer" } }, [
+      _c("hr"),
+      _vm._v(" "),
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-md-4" }, [
+          _c("h6", [
+            _vm._v(
+              "\n                    " +
+                _vm._s(_vm.totalNumberOfTask) +
+                " Item left\n                "
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-md-8" }, [
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col-md-2" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  on: {
+                    click: function($event) {
+                      return _vm.allTabVisibility("allDiv")
+                    }
+                  }
+                },
+                [_vm._v(" All ")]
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-2" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  on: {
+                    click: function($event) {
+                      return _vm.activeTabVisibility("activeDiv")
+                    }
+                  }
+                },
+                [_vm._v(" Active ")]
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-2" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  on: {
+                    click: function($event) {
+                      return _vm.completedTabVisibility("completedDiv")
+                    }
+                  }
+                },
+                [_vm._v(" Completed ")]
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-2" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-info",
+                  on: {
+                    click: function($event) {
+                      return _vm.clearCompleteTask()
+                    }
+                  }
+                },
+                [_vm._v(" Clear Completed ")]
+              )
+            ])
+          ])
         ])
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "col-md-8" }, [
-        _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col-md-2" }, [
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-primary",
-                on: {
-                  click: function($event) {
-                    return _vm.allTabVisibility("allDiv")
-                  }
-                }
-              },
-              [_vm._v(" All ")]
-            )
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-2" }, [
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-primary",
-                on: {
-                  click: function($event) {
-                    return _vm.activeTabVisibility("activeDiv")
-                  }
-                }
-              },
-              [_vm._v(" Active ")]
-            )
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-2" }, [
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-primary",
-                on: {
-                  click: function($event) {
-                    return _vm.completedTabVisibility("completedDiv")
-                  }
-                }
-              },
-              [_vm._v(" Completed ")]
-            )
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-2" }, [
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-info",
-                on: {
-                  click: function($event) {
-                    return _vm.clearCompleteTask()
-                  }
-                }
-              },
-              [_vm._v(" Clear Completed ")]
-            )
-          ])
-        ])
-      ])
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "gap" })
+      _c("div", { staticClass: "gap" })
+    ])
   ])
 }
 var staticRenderFns = []

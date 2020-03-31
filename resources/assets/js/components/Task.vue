@@ -176,32 +176,34 @@
 
 
         <!-- footer -->
-        <hr>
-        <div class="row">
-            <div class="col-md-4">
-                <h6>
-                    {{ totalNumberOfTask }} Item left
-                </h6>
-            </div>
+        <div id="footer">
+            <hr>
+            <div class="row">
+                <div class="col-md-4">
+                    <h6>
+                        {{ totalNumberOfTask }} Item left
+                    </h6>
+                </div>
 
-            <div class="col-md-8">
-                <div class="row">
-                    <div class="col-md-2">
-                        <button class="btn btn-primary" @click="allTabVisibility('allDiv')"> All </button>
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-primary" @click="activeTabVisibility('activeDiv')"> Active </button>
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-primary"  @click="completedTabVisibility('completedDiv')"> Completed </button>
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-info" @click="clearCompleteTask()"> Clear Completed </button>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <button class="btn btn-primary" @click="allTabVisibility('allDiv')"> All </button>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary" @click="activeTabVisibility('activeDiv')"> Active </button>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary"  @click="completedTabVisibility('completedDiv')"> Completed </button>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-info" @click="clearCompleteTask()"> Clear Completed </button>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="gap"></div>
         </div>
-        <div class="gap"></div>
 
 
 
@@ -213,7 +215,8 @@
 <script>
     export default {
         mounted() {
-            console.log('Task Component mounted.')
+            console.log('Task Component mounted.');
+
         },
 
         data() {
@@ -257,6 +260,8 @@
 
         created() {
             this.getAllTasks();
+            // document.getElementById("footer").style.display="none";
+
             // this.formVisibility();
         },
 
@@ -694,9 +699,10 @@
 
 
             formVisibility(){
-                document.getElementById("allDiv").style.display="block";
-                document.getElementById("activeDiv").style.display="none";
-                document.getElementById("completedDiv").style.display="none";
+                // document.getElementById("allDiv").style.display="block";
+                // document.getElementById("activeDiv").style.display="none";
+                // document.getElementById("completedDiv").style.display="none";
+                document.getElementById("footer").style.display="none";
             },
         },
 
