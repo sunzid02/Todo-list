@@ -93,13 +93,17 @@ class TaskController extends Controller
 
     }
 
+    public function completeTaskDestroy(Request $request)
+    {
+        // dd($request->all());
+        Task::where('completed', 1)->delete();
 
-    // public function index()
-    // {
-    //     $tasks = Task::all();
+        return \json_encode(true);
 
-    //     return TaskResource::collection($tasks);
-    // }
+    }
+
+
+    
 
 
 

@@ -116,6 +116,47 @@
 
         </div>
 
+
+        <!-- show active tasks -->
+        <div  id="activeDiv">
+             <div class="card card-body"
+                v-for="task in activeTasks"
+                v-bind:key="task.id"
+            >
+                <div class="row">
+                    <!-- complete task check -->
+                    <div class="col-md-1">             
+                        <input type="checkbox" v-model="task.completed" @click="completeTask(task, totalNumberOfTask)" >
+                    </div>
+
+                    <div class="col-md-10">
+                        <h4 @dblclick="task.editing = 1" v-if="task.editing === 0" :class="{ completed : task.completed }">
+                            {{ task.name }}
+                        </h4>
+                        <input 
+                            v-if="task.editing === 1"
+                            v-model="task.name"
+                            @blur="editTask(task)"
+                            @keyup.enter="editTask(task)"
+                        >
+                    </div>
+
+                    <div class="hover-btn">
+                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="alert" @click="deleteTask(task)">
+                            <span aria-hidden="true">×</span>
+                            <span class="sr-only">Close</span>
+                        </button>
+                    </div>
+                </div>    
+
+            </div>
+        </div>
+
+
+
+
+
+
         <!-- show completed tasks -->
         <div  id="completedDiv">
             <div class="card card-body"
@@ -132,21 +173,7 @@
             </div>
         </div>
 
-        <!-- show active tasks -->
-        <div  id="activeDiv">
-             <div class="card card-body"
-                v-for="at in activeTasks"
-                v-bind:key="at.id"
-            >
-                <div class="row">
-                    <div class="col-md-12">
-                        <h4>{{ at.name }}</h4>
 
-                    </div>
-                </div>
-
-            </div>
-        </div>
 
         <!-- footer -->
         <hr>
@@ -169,11 +196,12 @@
                         <button class="btn btn-primary"  @click="completedTabVisibility('completedDiv')"> Completed </button>
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-info"> Clear Completed </button>
+                        <button class="btn btn-info" @click="clearCompleteTask()"> Clear Completed </button>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="gap"></div>
 
 
 
@@ -229,7 +257,7 @@
 
         created() {
             this.getAllTasks();
-            this.formVisibility();
+            // this.formVisibility();
         },
 
         methods: {
@@ -289,7 +317,6 @@
                                 document.getElementById("completedDiv").style.display="none";
                                 document.getElementById("activeDiv").style.display="none";
 
-                                // document.getElementById(div).style.display="block"; 
 
                                 // alert(res.data.length);
                                 
@@ -382,8 +409,20 @@
                 .catch( err => console.log(err) );                
             },
 
+            clearCompleteTask(task) {
+                fetch(  `api/clear-complete-task`,{
+                    method: 'delete'
+                })
+                .then( res => res.json())
+                .then( res => {
+                    this.getAllTasks();
+                    this.completedTabVisibility('completedDiv');
+                })
+                .catch( err => console.log(err) );                
+            },
+
             completeTask(task, totalNumberOfTask){
-                document.getElementById("completedDiv").style.display="none";
+                // document.getElementById("completedDiv").style.display="none";
 
                 this.task.completed = 1;
                 this.task.edit = false;
@@ -425,21 +464,6 @@
                     this.getAllTasks();
                 })
                 .catch( err => console.log(err) ); 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 // console.log(this.completedTasks);
             },
 
@@ -480,8 +504,8 @@
 
             formVisibility(){
                 document.getElementById("allDiv").style.display="block";
-                document.getElementById("completedDiv").style.display="none";
                 document.getElementById("activeDiv").style.display="none";
+                document.getElementById("completedDiv").style.display="none";
             },
         },
 

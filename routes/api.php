@@ -24,5 +24,6 @@ Route::put('task', 'TaskController@update');
 Route::delete('task/{id}', 'TaskController@destroy');
 
 Route::put('complete-task/{id}', 'TaskController@completeTask');
+Route::delete('clear-complete-task', 'TaskController@completeTaskDestroy');
 // Route::get('complete-tasks', 'TaskController@completeTaskList');
 
