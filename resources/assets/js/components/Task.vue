@@ -86,12 +86,15 @@
                 v-bind:key="task.id"
             >
                 <div class="row">
+                    <!-- complete task check -->
                     <div class="col-md-1">             
                         <input type="checkbox" v-model="task.completed" @click="completeTask(task, totalNumberOfTask)" >
-
                     </div>
+
                     <div class="col-md-10">
-                        <h4 @dblclick="task.editing = 1" v-if="task.editing === 0" :class="{ completed : task.completed }">{{ task.name }}</h4>
+                        <h4 @dblclick="task.editing = 1" v-if="task.editing === 0" :class="{ completed : task.completed }">
+                            {{ task.name }}
+                        </h4>
                         <input 
                             v-if="task.editing === 1"
                             v-model="task.name"
@@ -129,7 +132,21 @@
             </div>
         </div>
 
+        <!-- show active tasks -->
+        <div  id="activeDiv">
+             <div class="card card-body"
+                v-for="at in activeTasks"
+                v-bind:key="at.id"
+            >
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4>{{ at.name }}</h4>
 
+                    </div>
+                </div>
+
+            </div>
+        </div>
 
         <!-- footer -->
         <hr>
@@ -143,13 +160,16 @@
             <div class="col-md-8">
                 <div class="row">
                     <div class="col-md-2">
-                        <button class="btn btn-primary" @click=" allTabVisibility('allDiv') ">All</button>
+                        <button class="btn btn-primary" @click="allTabVisibility('allDiv')"> All </button>
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-primary" > Active</button>
+                        <button class="btn btn-primary" @click="activeTabVisibility('activeDiv')"> Active </button>
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-primary"  @click=" completedTabVisibility('completedDiv') "> Completed</button>
+                        <button class="btn btn-primary"  @click="completedTabVisibility('completedDiv')"> Completed </button>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-info"> Clear Completed </button>
                     </div>
                 </div>
             </div>
@@ -172,6 +192,7 @@
             return {
                 tasks: [],
                 completedTasks: [],
+                activeTasks: [],
 
                 task: {
                     id:'',
@@ -181,6 +202,14 @@
                 },
 
                 newTask: {
+                    id:'',
+                    name:'',
+                    editing:0,
+                    completed: 0,
+
+                },
+
+                activeTask: {
                     id:'',
                     name:'',
                     editing:0,
@@ -200,6 +229,7 @@
 
         created() {
             this.getAllTasks();
+            this.formVisibility();
         },
 
         methods: {
@@ -213,7 +243,54 @@
                         .then(
                             res => {
                                 this.tasks = res.data;
-                                this.totalNumberOfTask = res.data.length;
+                                this.completedTasks = [];
+                                this.activeTasks = [];
+
+
+                                ////completed task list
+                                this.tasks.forEach( task => {
+                                    
+                                    if (task.completed == 1) 
+                                    {
+                                        var completedTaskObj = {
+                                            id : task.id,
+                                            name : task.name,
+                                            editing : 0,
+                                            completed : 1
+
+                                        };
+
+                                        this.completedTasks.push(completedTaskObj);                                                                                
+                                    }
+                                });
+
+
+                                ////active task list
+                                this.tasks.forEach( task => {
+                                    
+                                    if ( task.completed == 0 ) 
+                                    {
+                                        var activeTaskObj = {
+                                            id : task.id,
+                                            name : task.name,
+                                            editing : 0,
+                                            completed : 0
+
+                                        };
+
+                                        this.activeTasks.push(activeTaskObj);                                                                                
+                                    }
+                                });                                
+
+                                this.totalNumberOfTask = this.tasks.length - this.completedTasks.length;
+
+
+                                document.getElementById("allDiv").style.display="block";
+                                document.getElementById("completedDiv").style.display="none";
+                                document.getElementById("activeDiv").style.display="none";
+
+                                // document.getElementById(div).style.display="block"; 
+
                                 // alert(res.data.length);
                                 
                             }
@@ -284,6 +361,7 @@
                     this.newTask.name = '';
                     this.task.editing = 0;
                     this.newTask.editing = 0;
+                    this.edit= false;
                     // console.log('Task updated'+ 1);
 
                     this.getAllTasks();
@@ -308,26 +386,57 @@
                 document.getElementById("completedDiv").style.display="none";
 
                 this.task.completed = 1;
+                this.task.edit = false;
+                this.edit = false;
+
+                this.task.id = task.id;
+                this.task.name = task.name;
+                this.task.editing = 0;
+                this.task.completed = 1;
+
+
+
+
+                //api call to update
+                fetch(`api/complete-task/${task.id}`,{
+                    method: 'put',
                 
-                if (task.completed == true) {
-                    this.totalNumberOfTask = totalNumberOfTask - 1;
-                    
-                } 
-                else 
-                {
-                    this.totalNumberOfTask = totalNumberOfTask + 1;
+                    body: JSON.stringify(this.task),
 
-                }
+                    headers:{
+                        'content-type': 'application/json'
+                    }
+                })
+                .then( res => res.json())
+                .then( res => {
+                    // console.log(res);
 
-                var completedTaskObj = {
-                    id : task.id,
-                    name : task.name,
-                    editing : 0,
-                    completed : 0
+                    this.task.id = '';
+                    this.task.name = '';
+                    this.task.editing = 0;
+                    this.task.completed = 0;
 
-                };
+                    this.newTask.id = '';
+                    this.newTask.name = '';
+                    this.newTask.editing = 0;
+                    this.newTask.completed = 0;
+                    // console.log('Task updated'+ 1);
 
-                this.completedTasks.push(completedTaskObj);
+                    this.getAllTasks();
+                })
+                .catch( err => console.log(err) ); 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -339,6 +448,8 @@
 
                 document.getElementById("allDiv").style.display="none";
                 document.getElementById("completedDiv").style.display="none";
+                document.getElementById("activeDiv").style.display="none";
+
                 document.getElementById(div).style.display="block";                
                 console.log("all btn clicked");
             },
@@ -346,11 +457,31 @@
             completedTabVisibility(div){
 
                 document.getElementById("allDiv").style.display="none";
+                document.getElementById("activeDiv").style.display="none";
                 document.getElementById("completedDiv").style.display="none";
+
                 document.getElementById(div).style.display="block";  
 
                 console.log("completed btn clicked");
 
+            },
+
+            activeTabVisibility(div){
+                document.getElementById("allDiv").style.display="none";
+                document.getElementById("completedDiv").style.display="none";
+                document.getElementById("activeDiv").style.display="none";
+
+                document.getElementById(div).style.display="block";  
+
+                console.log("active btn clicked");
+
+            },
+
+
+            formVisibility(){
+                document.getElementById("allDiv").style.display="block";
+                document.getElementById("completedDiv").style.display="none";
+                document.getElementById("activeDiv").style.display="none";
             },
         },
 

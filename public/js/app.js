@@ -45357,6 +45357,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     mounted: function mounted() {
@@ -45366,6 +45386,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         return {
             tasks: [],
             completedTasks: [],
+            activeTasks: [],
 
             task: {
                 id: '',
@@ -45382,6 +45403,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             },
 
+            activeTask: {
+                id: '',
+                name: '',
+                editing: 0,
+                completed: 0
+
+            },
+
             edit: false,
             isDisabled: true,
             totalNumberOfTask: 0
@@ -45390,6 +45419,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     created: function created() {
         this.getAllTasks();
+        this.formVisibility();
     },
 
 
@@ -45401,7 +45431,49 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 return res.json();
             }).then(function (res) {
                 _this.tasks = res.data;
-                _this.totalNumberOfTask = res.data.length;
+                _this.completedTasks = [];
+                _this.activeTasks = [];
+
+                ////completed task list
+                _this.tasks.forEach(function (task) {
+
+                    if (task.completed == 1) {
+                        var completedTaskObj = {
+                            id: task.id,
+                            name: task.name,
+                            editing: 0,
+                            completed: 1
+
+                        };
+
+                        _this.completedTasks.push(completedTaskObj);
+                    }
+                });
+
+                ////active task list
+                _this.tasks.forEach(function (task) {
+
+                    if (task.completed == 0) {
+                        var activeTaskObj = {
+                            id: task.id,
+                            name: task.name,
+                            editing: 0,
+                            completed: 0
+
+                        };
+
+                        _this.activeTasks.push(activeTaskObj);
+                    }
+                });
+
+                _this.totalNumberOfTask = _this.tasks.length - _this.completedTasks.length;
+
+                document.getElementById("allDiv").style.display = "block";
+                document.getElementById("completedDiv").style.display = "none";
+                document.getElementById("activeDiv").style.display = "none";
+
+                // document.getElementById(div).style.display="block"; 
+
                 // alert(res.data.length);
             }).catch(function (err) {
                 console.log(err);
@@ -45464,6 +45536,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this3.newTask.name = '';
                 _this3.task.editing = 0;
                 _this3.newTask.editing = 0;
+                _this3.edit = false;
                 // console.log('Task updated'+ 1);
 
                 _this3.getAllTasks();
@@ -45485,25 +45558,48 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         completeTask: function completeTask(task, totalNumberOfTask) {
+            var _this5 = this;
+
             document.getElementById("completedDiv").style.display = "none";
 
             this.task.completed = 1;
+            this.task.edit = false;
+            this.edit = false;
 
-            if (task.completed == true) {
-                this.totalNumberOfTask = totalNumberOfTask - 1;
-            } else {
-                this.totalNumberOfTask = totalNumberOfTask + 1;
-            }
+            this.task.id = task.id;
+            this.task.name = task.name;
+            this.task.editing = 0;
+            this.task.completed = 1;
 
-            var completedTaskObj = {
-                id: task.id,
-                name: task.name,
-                editing: 0,
-                completed: 0
+            //api call to update
+            fetch('api/complete-task/' + task.id, {
+                method: 'put',
 
-            };
+                body: JSON.stringify(this.task),
 
-            this.completedTasks.push(completedTaskObj);
+                headers: {
+                    'content-type': 'application/json'
+                }
+            }).then(function (res) {
+                return res.json();
+            }).then(function (res) {
+                // console.log(res);
+
+                _this5.task.id = '';
+                _this5.task.name = '';
+                _this5.task.editing = 0;
+                _this5.task.completed = 0;
+
+                _this5.newTask.id = '';
+                _this5.newTask.name = '';
+                _this5.newTask.editing = 0;
+                _this5.newTask.completed = 0;
+                // console.log('Task updated'+ 1);
+
+                _this5.getAllTasks();
+            }).catch(function (err) {
+                return console.log(err);
+            });
 
             // console.log(this.completedTasks);
         },
@@ -45511,16 +45607,34 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             document.getElementById("allDiv").style.display = "none";
             document.getElementById("completedDiv").style.display = "none";
+            document.getElementById("activeDiv").style.display = "none";
+
             document.getElementById(div).style.display = "block";
             console.log("all btn clicked");
         },
         completedTabVisibility: function completedTabVisibility(div) {
 
             document.getElementById("allDiv").style.display = "none";
+            document.getElementById("activeDiv").style.display = "none";
             document.getElementById("completedDiv").style.display = "none";
+
             document.getElementById(div).style.display = "block";
 
             console.log("completed btn clicked");
+        },
+        activeTabVisibility: function activeTabVisibility(div) {
+            document.getElementById("allDiv").style.display = "none";
+            document.getElementById("completedDiv").style.display = "none";
+            document.getElementById("activeDiv").style.display = "none";
+
+            document.getElementById(div).style.display = "block";
+
+            console.log("active btn clicked");
+        },
+        formVisibility: function formVisibility() {
+            document.getElementById("allDiv").style.display = "block";
+            document.getElementById("completedDiv").style.display = "none";
+            document.getElementById("activeDiv").style.display = "none";
         }
     }
 
@@ -45644,7 +45758,13 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v(_vm._s(task.name))]
+                    [
+                      _vm._v(
+                        "\n                        " +
+                          _vm._s(task.name) +
+                          "\n                    "
+                      )
+                    ]
                   )
                 : _vm._e(),
               _vm._v(" "),
@@ -45740,6 +45860,21 @@ var render = function() {
       0
     ),
     _vm._v(" "),
+    _c(
+      "div",
+      { attrs: { id: "activeDiv" } },
+      _vm._l(_vm.activeTasks, function(at) {
+        return _c("div", { key: at.id, staticClass: "card card-body" }, [
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col-md-12" }, [
+              _c("h4", [_vm._v(_vm._s(at.name))])
+            ])
+          ])
+        ])
+      }),
+      0
+    ),
+    _vm._v(" "),
     _c("hr"),
     _vm._v(" "),
     _c("div", { staticClass: "row" }, [
@@ -45766,11 +45901,24 @@ var render = function() {
                   }
                 }
               },
-              [_vm._v("All")]
+              [_vm._v(" All ")]
             )
           ]),
           _vm._v(" "),
-          _vm._m(0),
+          _c("div", { staticClass: "col-md-2" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary",
+                on: {
+                  click: function($event) {
+                    return _vm.activeTabVisibility("activeDiv")
+                  }
+                }
+              },
+              [_vm._v(" Active ")]
+            )
+          ]),
           _vm._v(" "),
           _c("div", { staticClass: "col-md-2" }, [
             _c(
@@ -45783,9 +45931,11 @@ var render = function() {
                   }
                 }
               },
-              [_vm._v(" Completed")]
+              [_vm._v(" Completed ")]
             )
-          ])
+          ]),
+          _vm._v(" "),
+          _vm._m(0)
         ])
       ])
     ])
@@ -45797,7 +45947,9 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "col-md-2" }, [
-      _c("button", { staticClass: "btn btn-primary" }, [_vm._v(" Active")])
+      _c("button", { staticClass: "btn btn-info" }, [
+        _vm._v(" Clear Completed ")
+      ])
     ])
   }
 ]

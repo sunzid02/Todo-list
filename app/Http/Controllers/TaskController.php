@@ -59,6 +59,8 @@ class TaskController extends Controller
 
     }
 
+
+
     /**
      * Remove the specified resource from storage.
      *
@@ -76,4 +78,31 @@ class TaskController extends Controller
             # code...
         }
     }
+
+
+
+    public function completeTask(Request $request)
+    {
+        // dd($request->all());
+        Task::where('id', $request->id)->update([
+            'updated_at' => Carbon::now(),
+            'completed' => 1,
+        ]);
+
+        return \json_encode(true);
+
+    }
+
+
+    // public function index()
+    // {
+    //     $tasks = Task::all();
+
+    //     return TaskResource::collection($tasks);
+    // }
+
+
+
+
+
 }
