@@ -126,7 +126,7 @@
                 <div class="row">
                     <!-- complete task check -->
                     <div class="col-md-1">             
-                        <input type="checkbox" v-model="task.completed" @click="completeTask(task, totalNumberOfTask)" >
+                        <input type="checkbox" v-model="task.completed" @click="completeTaskFromActiveTab(task, totalNumberOfTask)" >
                     </div>
 
                     <div class="col-md-10">
@@ -270,9 +270,11 @@
                         )
                         .then(
                             res => {
-                                this.tasks = res.data;
+                                this.tasks = [];
                                 this.completedTasks = [];
                                 this.activeTasks = [];
+                                
+                                this.tasks = res.data;
 
 
                                 ////completed task list
@@ -415,8 +417,74 @@
                 })
                 .then( res => res.json())
                 .then( res => {
-                    this.getAllTasks();
-                    this.completedTabVisibility('completedDiv');
+                    // this.getAllTasks();
+                    // this.completedTabVisibility('completedDiv');
+
+                    // this.getAllTasks();
+                    fetch('api/tasks')
+                        .then(
+                            res => res.json()
+                        )
+                        .then(
+                            res => {
+                                this.tasks = [];
+                                this.completedTasks = [];
+                                this.activeTasks = [];
+                                
+                                this.tasks = res.data;
+
+
+                                ////completed task list
+                                this.tasks.forEach( task => {
+                                    
+                                    if (task.completed == 1) 
+                                    {
+                                        var completedTaskObj = {
+                                            id : task.id,
+                                            name : task.name,
+                                            editing : 0,
+                                            completed : 1
+
+                                        };
+
+                                        this.completedTasks.push(completedTaskObj);                                                                                
+                                    }
+                                });
+
+
+                                ////active task list
+                                this.tasks.forEach( task => {
+                                    
+                                    if ( task.completed == 0 ) 
+                                    {
+                                        var activeTaskObj = {
+                                            id : task.id,
+                                            name : task.name,
+                                            editing : 0,
+                                            completed : 0
+
+                                        };
+
+                                        this.activeTasks.push(activeTaskObj);                                                                                
+                                    }
+                                });                                
+
+                                this.totalNumberOfTask = this.tasks.length - this.completedTasks.length;
+
+
+                                document.getElementById("allDiv").style.display="none";
+                                document.getElementById("activeDiv").style.display="none";
+                                document.getElementById("completedDiv").style.display="block";
+
+
+                                // alert(res.data.length);
+                                
+                            }
+                        )
+                        .catch( err =>{
+                            console.log(err);
+                            
+                        });
                 })
                 .catch( err => console.log(err) );                
             },
@@ -462,6 +530,129 @@
                     // console.log('Task updated'+ 1);
 
                     this.getAllTasks();
+                })
+                .catch( err => console.log(err) ); 
+                // console.log(this.completedTasks);
+            },
+
+            completeTaskFromActiveTab(task, totalNumberOfTask){
+                // document.getElementById("completedDiv").style.display="none";
+
+                this.task.completed = 1;
+                this.task.edit = false;
+                this.edit = false;
+
+                this.task.id = task.id;
+                this.task.name = task.name;
+                this.task.editing = 0;
+                this.task.completed = 1;
+
+
+
+
+                //api call to update
+                fetch(`api/complete-task/${task.id}`,{
+                    method: 'put',
+                
+                    body: JSON.stringify(this.task),
+
+                    headers:{
+                        'content-type': 'application/json'
+                    }
+                })
+                .then( res => res.json())
+                .then( res => {
+                    // console.log(res);
+
+                    this.task.id = '';
+                    this.task.name = '';
+                    this.task.editing = 0;
+                    this.task.completed = 0;
+
+                    this.newTask.id = '';
+                    this.newTask.name = '';
+                    this.newTask.editing = 0;
+                    this.newTask.completed = 0;
+                    // console.log('Task updated'+ 1);
+
+                    // this.getAllTasks();
+                    fetch('api/tasks')
+                        .then(
+                            res => res.json()
+                        )
+                        .then(
+                            res => {
+                                this.tasks = [];
+                                this.completedTasks = [];
+                                this.activeTasks = [];
+                                
+                                this.tasks = res.data;
+
+
+                                ////completed task list
+                                this.tasks.forEach( task => {
+                                    
+                                    if (task.completed == 1) 
+                                    {
+                                        var completedTaskObj = {
+                                            id : task.id,
+                                            name : task.name,
+                                            editing : 0,
+                                            completed : 1
+
+                                        };
+
+                                        this.completedTasks.push(completedTaskObj);                                                                                
+                                    }
+                                });
+
+
+                                ////active task list
+                                this.tasks.forEach( task => {
+                                    
+                                    if ( task.completed == 0 ) 
+                                    {
+                                        var activeTaskObj = {
+                                            id : task.id,
+                                            name : task.name,
+                                            editing : 0,
+                                            completed : 0
+
+                                        };
+
+                                        this.activeTasks.push(activeTaskObj);                                                                                
+                                    }
+                                });                                
+
+                                this.totalNumberOfTask = this.tasks.length - this.completedTasks.length;
+
+
+                                document.getElementById("allDiv").style.display="none";
+                                document.getElementById("completedDiv").style.display="none";
+                                document.getElementById("activeDiv").style.display="block";
+
+
+                                // alert(res.data.length);
+                                
+                            }
+                        )
+                        .catch( err =>{
+                            console.log(err);
+                            
+                        });
+
+
+
+
+
+
+
+
+
+
+
+
+
                 })
                 .catch( err => console.log(err) ); 
                 // console.log(this.completedTasks);

@@ -45458,9 +45458,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             fetch('api/tasks').then(function (res) {
                 return res.json();
             }).then(function (res) {
-                _this.tasks = res.data;
+                _this.tasks = [];
                 _this.completedTasks = [];
                 _this.activeTasks = [];
+
+                _this.tasks = res.data;
 
                 ////completed task list
                 _this.tasks.forEach(function (task) {
@@ -45591,8 +45593,61 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }).then(function (res) {
                 return res.json();
             }).then(function (res) {
-                _this5.getAllTasks();
-                _this5.completedTabVisibility('completedDiv');
+                // this.getAllTasks();
+                // this.completedTabVisibility('completedDiv');
+
+                // this.getAllTasks();
+                fetch('api/tasks').then(function (res) {
+                    return res.json();
+                }).then(function (res) {
+                    _this5.tasks = [];
+                    _this5.completedTasks = [];
+                    _this5.activeTasks = [];
+
+                    _this5.tasks = res.data;
+
+                    ////completed task list
+                    _this5.tasks.forEach(function (task) {
+
+                        if (task.completed == 1) {
+                            var completedTaskObj = {
+                                id: task.id,
+                                name: task.name,
+                                editing: 0,
+                                completed: 1
+
+                            };
+
+                            _this5.completedTasks.push(completedTaskObj);
+                        }
+                    });
+
+                    ////active task list
+                    _this5.tasks.forEach(function (task) {
+
+                        if (task.completed == 0) {
+                            var activeTaskObj = {
+                                id: task.id,
+                                name: task.name,
+                                editing: 0,
+                                completed: 0
+
+                            };
+
+                            _this5.activeTasks.push(activeTaskObj);
+                        }
+                    });
+
+                    _this5.totalNumberOfTask = _this5.tasks.length - _this5.completedTasks.length;
+
+                    document.getElementById("allDiv").style.display = "none";
+                    document.getElementById("activeDiv").style.display = "none";
+                    document.getElementById("completedDiv").style.display = "block";
+
+                    // alert(res.data.length);
+                }).catch(function (err) {
+                    console.log(err);
+                });
             }).catch(function (err) {
                 return console.log(err);
             });
@@ -45637,6 +45692,102 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 // console.log('Task updated'+ 1);
 
                 _this6.getAllTasks();
+            }).catch(function (err) {
+                return console.log(err);
+            });
+            // console.log(this.completedTasks);
+        },
+        completeTaskFromActiveTab: function completeTaskFromActiveTab(task, totalNumberOfTask) {
+            var _this7 = this;
+
+            // document.getElementById("completedDiv").style.display="none";
+
+            this.task.completed = 1;
+            this.task.edit = false;
+            this.edit = false;
+
+            this.task.id = task.id;
+            this.task.name = task.name;
+            this.task.editing = 0;
+            this.task.completed = 1;
+
+            //api call to update
+            fetch('api/complete-task/' + task.id, {
+                method: 'put',
+
+                body: JSON.stringify(this.task),
+
+                headers: {
+                    'content-type': 'application/json'
+                }
+            }).then(function (res) {
+                return res.json();
+            }).then(function (res) {
+                // console.log(res);
+
+                _this7.task.id = '';
+                _this7.task.name = '';
+                _this7.task.editing = 0;
+                _this7.task.completed = 0;
+
+                _this7.newTask.id = '';
+                _this7.newTask.name = '';
+                _this7.newTask.editing = 0;
+                _this7.newTask.completed = 0;
+                // console.log('Task updated'+ 1);
+
+                // this.getAllTasks();
+                fetch('api/tasks').then(function (res) {
+                    return res.json();
+                }).then(function (res) {
+                    _this7.tasks = [];
+                    _this7.completedTasks = [];
+                    _this7.activeTasks = [];
+
+                    _this7.tasks = res.data;
+
+                    ////completed task list
+                    _this7.tasks.forEach(function (task) {
+
+                        if (task.completed == 1) {
+                            var completedTaskObj = {
+                                id: task.id,
+                                name: task.name,
+                                editing: 0,
+                                completed: 1
+
+                            };
+
+                            _this7.completedTasks.push(completedTaskObj);
+                        }
+                    });
+
+                    ////active task list
+                    _this7.tasks.forEach(function (task) {
+
+                        if (task.completed == 0) {
+                            var activeTaskObj = {
+                                id: task.id,
+                                name: task.name,
+                                editing: 0,
+                                completed: 0
+
+                            };
+
+                            _this7.activeTasks.push(activeTaskObj);
+                        }
+                    });
+
+                    _this7.totalNumberOfTask = _this7.tasks.length - _this7.completedTasks.length;
+
+                    document.getElementById("allDiv").style.display = "none";
+                    document.getElementById("completedDiv").style.display = "none";
+                    document.getElementById("activeDiv").style.display = "block";
+
+                    // alert(res.data.length);
+                }).catch(function (err) {
+                    console.log(err);
+                });
             }).catch(function (err) {
                 return console.log(err);
             });
@@ -45899,7 +46050,10 @@ var render = function() {
                 },
                 on: {
                   click: function($event) {
-                    return _vm.completeTask(task, _vm.totalNumberOfTask)
+                    return _vm.completeTaskFromActiveTab(
+                      task,
+                      _vm.totalNumberOfTask
+                    )
                   },
                   change: function($event) {
                     var $$a = task.completed,
