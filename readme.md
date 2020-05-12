@@ -3,6 +3,7 @@
 A todo-list project where you can add your task, edit, delete e.t.c
 
 - clone
+- create .env file
 - npm install
 - npm run watch
 - run the migrations ( php artisan migrate )
